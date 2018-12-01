@@ -18,23 +18,11 @@ static void key_nvic_config()
 stop/run   ------------> PA0  ------>KEY3
 CC/CV      ------------> PA3  ------>KEY0
 Local/Remote ----------> PC4  ------>KEY1
-	Timer      ------------> PB2  ------>KEY2 :  0 for run 1 for stop
-
+Timer      ------------> PB2  ------>KEY2 :  0 for run 1 for stop
+Alarm      ------------> PA1  ------>KEY4  
 */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);  
 	
-  NVIC_InitStructure.NVIC_IRQChannel = KEY3_INT_EXTI_IRQ;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
- 
-  NVIC_InitStructure.NVIC_IRQChannel = KEY4_INT_EXTI_IRQ;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 4;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
   NVIC_InitStructure.NVIC_IRQChannel = KEY0_INT_EXTI_IRQ;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
@@ -52,6 +40,18 @@ Local/Remote ----------> PC4  ------>KEY1
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
+	
+	NVIC_InitStructure.NVIC_IRQChannel = KEY3_INT_EXTI_IRQ;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+ 
+  NVIC_InitStructure.NVIC_IRQChannel = KEY4_INT_EXTI_IRQ;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 4;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
 }
 
 void EXTI_Key_Config(void)
@@ -60,7 +60,11 @@ void EXTI_Key_Config(void)
 	EXTI_InitTypeDef EXTI_InitStructure;
 
 	/*开启按键GPIO口的时钟*/
-	RCC_APB2PeriphClockCmd(KEY0_INT_GPIO_CLK |KEY1_INT_GPIO_CLK |KEY2_INT_GPIO_CLK|KEY3_INT_GPIO_CLK,ENABLE);
+	RCC_APB2PeriphClockCmd(KEY0_INT_GPIO_CLK |\
+												 KEY1_INT_GPIO_CLK |\
+												 KEY2_INT_GPIO_CLK |\
+												 KEY3_INT_GPIO_CLK |\
+	                       KEY4_INT_GPIO_CLK ,ENABLE);
 												
 	/* 配置 NVIC 中断*/
 	key_nvic_config();
@@ -97,7 +101,7 @@ void EXTI_Key_Config(void)
 	/* EXTI为中断模式 */
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
 	/* 上升沿中断 */
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
   /* 使能中断 */	
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&EXTI_InitStructure);

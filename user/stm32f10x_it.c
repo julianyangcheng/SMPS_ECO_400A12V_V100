@@ -166,28 +166,7 @@ void SysTick_Handler(void)
 uint16_t  timer = 0;
 uint16_t  Tim = 0;
 uint16_t Tim1=0;
-/*启动停止中断PA0--->KEY3*/
-void KEY3_IRQHandler(void)
-{
-  //确保是否产生了EXTI Line中断
-	if(EXTI_GetITStatus(KEY3_INT_EXTI_LINE) != RESET) 
-	{
-    if(GPIO_ReadInputDataBit(KEY3_INT_GPIO_PORT,KEY3_INT_EXTI_LINE)==SET)
-		{
-			Loc_Run_Status &= ~Bit_run_stop;
-		}
-		else
-		{
-			Loc_Run_Status |= Bit_run_stop;
-		}
-				/*复位DA输出*/
-		DAC_SetDualChannelData(DAC_DATA_ALIGN, 0, 0);
-	} 
-	else
-	{
-	}
-	EXTI_ClearITPendingBit(KEY3_INT_EXTI_LINE); 
-}
+
 
 
 void KEY0_IRQHandler(void)
@@ -226,13 +205,16 @@ void KEY1_IRQHandler(void)
 	{
 
 		if(GPIO_ReadInputDataBit(KEY1_INT_GPIO_PORT, KEY1_INT_GPIO_PIN)==SET)
+		{
 			Loc_Remo_Flag |= Bit_Loc_Remo;
+			DAC_SetDualChannelData(DAC_DATA_ALIGN, 0, 0);
+		}
 		else
 			Loc_Remo_Flag &= ~Bit_Loc_Remo;
 	}
 	else
-	{}
-		DAC_SetDualChannelData(DAC_DATA_ALIGN, 0, 0);
+	{
+	}		
     //清除中断标志位
 		EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE);     
 	 
@@ -260,7 +242,60 @@ void KEY2_IRQHandler(void)
 		EXTI_ClearITPendingBit(KEY2_INT_EXTI_LINE);     
 	
 }
+/*启动停止中断PA0--->KEY3*/
+void KEY3_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(KEY3_INT_EXTI_LINE) != RESET) 
+	{
+    if(GPIO_ReadInputDataBit(KEY3_INT_GPIO_PORT,KEY3_INT_EXTI_LINE)==SET)
+		{
+			Loc_Run_Status &= ~Bit_run_stop;
+			DAC_SetDualChannelData(DAC_DATA_ALIGN, 0, 0);
+		}
+		else
+		{
+			Loc_Run_Status |= Bit_run_stop;
+		}
+				/*复位DA输出*/
+		
+	} 
+	else
+	{
+	}
+	EXTI_ClearITPendingBit(KEY3_INT_EXTI_LINE); 
+}
 
+/*故障中断PA1--->KEY4*/
+void KEY4_IRQHandler(void)
+{
+  
+	if(EXTI_GetITStatus(KEY4_INT_EXTI_LINE) != RESET) 
+	{
+    if(GPIO_ReadInputDataBit(KEY4_INT_GPIO_PORT,KEY4_INT_EXTI_LINE)==SET) //高电平为接收到故障信号
+		{
+		Loc_Run_Status &= ~Bit_alarm; //0为故障
+		/*关闭GPIO中断*/
+		EXTI->IMR &= ~(EXTI_Line3); 
+		EXTI->IMR &= ~(EXTI_Line0);  
+		EXTI->IMR &= ~(EXTI_Line2);  
+		DAC_SetDualChannelData(DAC_DATA_ALIGN, 0, 0);
+		}
+		else
+		{
+		Loc_Run_Status |= Bit_alarm; //1为正常
+		/*------------启动GPIO 外部中断-------------------*/
+		EXTI->IMR |= EXTI_Line3; 
+		EXTI->IMR |= EXTI_Line0; 
+		EXTI->IMR |= EXTI_Line2; 
+		}
+		
+	} 
+	else
+	{
+	}
+	EXTI_ClearITPendingBit(KEY4_INT_EXTI_LINE); 
+}
 
 
 void TIM2_IRQHandler(void)

@@ -9,6 +9,7 @@
 #define Bit_cc_cv                (0x0001<<1)
 #define Bit_Loc_Remo             (0x0001<<0)
 #define Bit_Timer                (0x0001<<2)
+#define Bit_alarm                (0x0001<<3)
 
 #define Max_set                   3700
 extern __IO uint16_t Run_Status;

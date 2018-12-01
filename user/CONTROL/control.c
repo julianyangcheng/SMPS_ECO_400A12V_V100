@@ -140,6 +140,14 @@ void GET_Loc_GPIO(void)
 	{
 			Loc_Run_Status |= Bit_run_stop;
 	}
+ if(GPIO_ReadInputDataBit(KEY4_INT_GPIO_PORT,KEY4_INT_EXTI_LINE)==SET) //高电平为接收到故障信号
+		{
+			Loc_Run_Status &= ~Bit_alarm; //0为故障
+		}
+	else
+		{
+			Loc_Run_Status |= Bit_alarm; //1为正常
+		}	
 }
 
 void control(uint16_t Loc_Remo_Flag)
