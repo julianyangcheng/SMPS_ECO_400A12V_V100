@@ -18,7 +18,7 @@ uint16_t Uo_value = 0;
 
 void ADC_Converter_Init(void)
 {
-	for(uint8_t i = 0; i< 3*BuffSize;i++)
+	for(uint16_t i = 0; i< 3*BuffSize;i++)
 		ADC_Converter_Value[i]=0;
 }	
 																			 
@@ -58,7 +58,7 @@ void ADC_DMA_CONFIG()
 
 void ADC_Value_Converter()
 {
-		for(uint8_t j=0; j<BuffSize;j++)
+		for(uint16_t j=0; j<BuffSize;j++)
 		{
 			Given_temp+=ADC_Converter_Value[3*j];
 			Uo_Temp+=ADC_Converter_Value[3*j+1];

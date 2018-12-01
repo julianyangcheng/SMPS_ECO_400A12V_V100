@@ -6,7 +6,7 @@
 //DAC DHR12RD寄存器，12位、右对齐、双通道
 #define DAC_DHR12RD_ADDRESS      (DAC_BASE+0x20) 
 //#define BuffSize 1
-#define BuffSize 50
+#define BuffSize 1000
 #define DMA_x DMA1_Channel1
 
 #define DMA1_CLK_FUN RCC_AHBPeriph_DMA1

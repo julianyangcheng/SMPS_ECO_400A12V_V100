@@ -188,34 +188,7 @@ void KEY3_IRQHandler(void)
 	}
 	EXTI_ClearITPendingBit(KEY3_INT_EXTI_LINE); 
 }
-/*CC/CV中断PA3--->KEY0*/
-//void KEY0_IRQHandler(void)
-//{
-//  //确保是否产生了PC13中断
-//	if(EXTI_GetITStatus(KEY0_INT_EXTI_LINE) != RESET) 
-//	
-//		{
-//		if(GPIO_ReadInputDataBit(KEY0_INT_GPIO_PORT,KEY0_INT_EXTI_LINE)==SET)
-//		{
-//			Loc_Run_Status &= ~Bit_run_stop;
-//		}	
-//		/*如果是低电平，开始运行，Loc_Run_Status最低为置位*/
-//		else
-//		{
-//			
-//			Loc_Run_Status |= Bit_run_stop;			
-//		}
-//		}
-//		else
-//		{
-//		}
-//		/*复位DA输出*/
-//		DAC_SetDualChannelData(DAC_DATA_ALIGN, 0, 0);
-//	/*清除中断标志，重新等待中断*/
-//		EXTI_ClearITPendingBit(KEY0_INT_EXTI_LINE);     
-//	  
-//}
-//
+
 
 void KEY0_IRQHandler(void)
 {

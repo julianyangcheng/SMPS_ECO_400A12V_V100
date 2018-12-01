@@ -99,36 +99,47 @@ void Remo_CV_Mode(void)
 				DAC_SetDualChannelData(DAC_DATA_ALIGN, 3227, 3200);	
 			}	
 }
+
+
 void GET_Loc_GPIO(void)
 {
-	if(GPIO_ReadInputDataBit(KEY0_INT_GPIO_PORT,KEY0_INT_GPIO_PIN) == SET)
+	//初始化cc，cv参数。
+	if(GPIO_ReadInputDataBit(KEY0_INT_GPIO_PORT,KEY0_INT_GPIO_PIN)==SET)
+		{
+			Loc_Run_Status |=Bit_cc_cv;			
+		}
+		else
+		{
+			Loc_Run_Status &= ~Bit_cc_cv;			
+		}
+		//初始化远控，本地控制参数
+	if(GPIO_ReadInputDataBit(KEY1_INT_GPIO_PORT, KEY1_INT_GPIO_PIN)==SET)
 	{
-		Loc_Run_Status &= ~Bit_run_stop;
+			Loc_Remo_Flag |= Bit_Loc_Remo;
 	}
 	else
 	{
-		Loc_Run_Status |= Bit_run_stop;			
+			Loc_Remo_Flag &= ~Bit_Loc_Remo;
 	}
-	if((GPIO_ReadInputDataBit(KEY1_INT_GPIO_PORT,KEY1_INT_GPIO_PIN)<<1)==SET)
+	//初始化timer参数。
+	if(GPIO_ReadInputDataBit(KEY2_INT_GPIO_PORT, KEY2_INT_GPIO_PIN)==RESET)
 	{
-		Loc_Run_Status |=Bit_cc_cv;
-	}
-	else
-	{
-		Loc_Run_Status &= ~Bit_cc_cv;	
-	}
-	if((GPIO_ReadInputDataBit(KEY2_INT_GPIO_PORT,KEY2_INT_GPIO_PIN)<<0) == SET)
-	{
-		Loc_Remo_Flag |= Bit_Loc_Remo;
+			Loc_Run_Status |= Bit_Timer;
 	}
 	else
 	{
-		Loc_Remo_Flag &= ~Bit_Loc_Remo;
+			Loc_Run_Status &= ~Bit_Timer;
+	}
 	
+	//初始化Run,Stop参数。
+  if(GPIO_ReadInputDataBit(KEY3_INT_GPIO_PORT,KEY3_INT_EXTI_LINE)==SET)
+	{
+			Loc_Run_Status &= ~Bit_run_stop;
 	}
-//	Loc_Run_Status |= (GPIO_ReadInputDataBit(KEY0_INT_GPIO_PORT,KEY0_INT_GPIO_PIN)<<0);
-//	Loc_Run_Status |= (GPIO_ReadInputDataBit(KEY1_INT_GPIO_PORT,KEY1_INT_GPIO_PIN)<<1);
-//	Loc_Remo_Flag  |= (GPIO_ReadInputDataBit(KEY2_INT_GPIO_PORT,KEY2_INT_GPIO_PIN)<<0);
+	else
+	{
+			Loc_Run_Status |= Bit_run_stop;
+	}
 }
 
 void control(uint16_t Loc_Remo_Flag)
